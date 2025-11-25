@@ -108,6 +108,7 @@ fn main() -> Result<()> {
             .header("wrapper.h")
             .parse_callbacks(Box::new(bindgen::CargoCallbacks))
             .generate_comments(true)
+            .opaque_type("pthread_mutex_t")
             .allowlist_type("apriltag_.*")
             .allowlist_type("image_u8_.*")
             .allowlist_type("image_u8x3_.*")
