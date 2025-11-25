@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, ensure, Context, Result};
+use anyhow::{bail, ensure, Result};
 use itertools::Itertools;
 use once_cell::sync::Lazy;
 use std::{
@@ -7,7 +7,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-static MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 static OUT_DIR: Lazy<PathBuf> = Lazy::new(|| {
     let path = env::var_os("OUT_DIR").expect("The OUT_DIR environment variable is not set");
     PathBuf::from(path)
@@ -104,6 +103,8 @@ fn main() -> Result<()> {
     // If we need to regenerate the .rs files for bindings, do that, too.
     #[cfg(feature = "buildtime-bindgen")]
     {
+        use anyhow::{self, Context};
+
         let bindgen_builder = bindgen::Builder::default()
             .header("wrapper.h")
             .parse_callbacks(Box::new(bindgen::CargoCallbacks))
@@ -135,7 +136,9 @@ fn main() -> Result<()> {
             .generate()
             .context("Unable to generate bindings")?;
 
-        let bindings_path = Path::new(MANIFEST_DIR).join("bindings").join("bindings.rs");
+        let bindings_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("bindings")
+            .join("bindings.rs");
         fs::create_dir_all(bindings_path.parent().unwrap())?;
         bindings
             .write_to_file(bindings_path)
