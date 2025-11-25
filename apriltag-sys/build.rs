@@ -159,9 +159,9 @@ fn main() -> Result<()> {
                 }
                 let lib_name = pthread_static_lib
                     .file_stem()
-                    .ok_or_else(|| anyhow!("file_stem() returns None"))?
+                    .ok_or_else(|| anyhow::anyhow!("file_stem() returns None"))?
                     .to_str()
-                    .ok_or_else(|| anyhow!("to_str() returns None"))?;
+                    .ok_or_else(|| anyhow::anyhow!("to_str() returns None"))?;
                 println!("cargo:rustc-link-lib={}", lib_name);
 
                 // Currently, some shims require the function "gettimeofday" not available by default. Linking to winmm fix this issue.
